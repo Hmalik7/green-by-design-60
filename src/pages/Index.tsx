@@ -34,18 +34,50 @@ const serviceCategories = [
   { value: "security", label: "Security & Identity" },
 ];
 
-const awsRegions = [
-  { value: "us-east-1", label: "US East (N. Virginia)" },
-  { value: "us-east-2", label: "US East (Ohio)" },
-  { value: "us-west-1", label: "US West (N. California)" },
-  { value: "us-west-2", label: "US West (Oregon)" },
-  { value: "eu-west-1", label: "Europe (Ireland)" },
-  { value: "eu-west-2", label: "Europe (London)" },
-  { value: "eu-central-1", label: "Europe (Frankfurt)" },
-  { value: "ap-southeast-1", label: "Asia Pacific (Singapore)" },
-  { value: "ap-southeast-2", label: "Asia Pacific (Sydney)" },
-  { value: "ap-northeast-1", label: "Asia Pacific (Tokyo)" },
-];
+const cloudRegions = {
+  aws: [
+    { value: "us-east-1", label: "US East (N. Virginia)" },
+    { value: "us-east-2", label: "US East (Ohio)" },
+    { value: "us-west-1", label: "US West (N. California)" },
+    { value: "us-west-2", label: "US West (Oregon)" },
+    { value: "eu-west-1", label: "Europe (Ireland)" },
+    { value: "eu-west-2", label: "Europe (London)" },
+    { value: "eu-central-1", label: "Europe (Frankfurt)" },
+    { value: "ap-southeast-1", label: "Asia Pacific (Singapore)" },
+    { value: "ap-southeast-2", label: "Asia Pacific (Sydney)" },
+    { value: "ap-northeast-1", label: "Asia Pacific (Tokyo)" },
+  ],
+  gcp: [
+    { value: "us-central1", label: "US Central (Iowa)" },
+    { value: "us-east1", label: "US East (South Carolina)" },
+    { value: "us-west1", label: "US West (Oregon)" },
+    { value: "europe-west1", label: "Europe West (Belgium)" },
+    { value: "europe-west2", label: "Europe West (London)" },
+    { value: "asia-southeast1", label: "Asia Southeast (Singapore)" },
+    { value: "asia-northeast1", label: "Asia Northeast (Tokyo)" },
+  ],
+  azure: [
+    { value: "eastus", label: "East US" },
+    { value: "westus", label: "West US" },
+    { value: "centralus", label: "Central US" },
+    { value: "westeurope", label: "West Europe" },
+    { value: "northeurope", label: "North Europe" },
+    { value: "southeastasia", label: "Southeast Asia" },
+    { value: "eastasia", label: "East Asia" },
+  ],
+  digitalocean: [
+    { value: "nyc1", label: "New York 1" },
+    { value: "nyc3", label: "New York 3" },
+    { value: "sfo3", label: "San Francisco 3" },
+    { value: "tor1", label: "Toronto 1" },
+    { value: "lon1", label: "London 1" },
+    { value: "fra1", label: "Frankfurt 1" },
+    { value: "sgp1", label: "Singapore 1" },
+  ],
+  other: [
+    { value: "custom", label: "Custom/Other Region" },
+  ]
+};
 
 const Index = () => {
   const [formData, setFormData] = useState({
@@ -289,13 +321,18 @@ const Index = () => {
               </div>
 
               <div className="space-y-3">
-                <Label htmlFor="region" className="text-base font-medium">AWS Region</Label>
-                <Select value={formData.region} onValueChange={(value) => setFormData({...formData, region: value})} required>
+                <Label htmlFor="region" className="text-base font-medium">Region</Label>
+                <Select 
+                  value={formData.region} 
+                  onValueChange={(value) => setFormData({...formData, region: value})} 
+                  required
+                  disabled={!formData.provider}
+                >
                   <SelectTrigger className="h-12 text-base border-2 focus:border-primary/50">
-                    <SelectValue placeholder="Select AWS region" />
+                    <SelectValue placeholder={formData.provider ? "Select region" : "Select provider first"} />
                   </SelectTrigger>
                   <SelectContent className="bg-background border-2 shadow-lg z-50">
-                    {awsRegions.map((region) => (
+                    {formData.provider && cloudRegions[formData.provider as keyof typeof cloudRegions]?.map((region) => (
                       <SelectItem key={region.value} value={region.value} className="text-base">
                         {region.label}
                       </SelectItem>
