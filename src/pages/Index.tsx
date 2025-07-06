@@ -34,11 +34,25 @@ const serviceCategories = [
   { value: "security", label: "Security & Identity" },
 ];
 
+const awsRegions = [
+  { value: "us-east-1", label: "US East (N. Virginia)" },
+  { value: "us-east-2", label: "US East (Ohio)" },
+  { value: "us-west-1", label: "US West (N. California)" },
+  { value: "us-west-2", label: "US West (Oregon)" },
+  { value: "eu-west-1", label: "Europe (Ireland)" },
+  { value: "eu-west-2", label: "Europe (London)" },
+  { value: "eu-central-1", label: "Europe (Frankfurt)" },
+  { value: "ap-southeast-1", label: "Asia Pacific (Singapore)" },
+  { value: "ap-southeast-2", label: "Asia Pacific (Sydney)" },
+  { value: "ap-northeast-1", label: "Asia Pacific (Tokyo)" },
+];
+
 const Index = () => {
   const [formData, setFormData] = useState({
     organization: "",
     provider: "",
     services: "",
+    region: "",
     monthlySpend: "",
     primaryUse: "",
     notes: ""
@@ -54,7 +68,7 @@ const Index = () => {
     const carbonResult = await calculateAWSCarbonFootprint(
       Number(formData.monthlySpend),
       formData.services,
-      'us-east-1' // Default region, could be made configurable
+      formData.region || 'us-east-1'
     );
     
     const newSubmission = {
@@ -83,6 +97,7 @@ const Index = () => {
       organization: "",
       provider: "",
       services: "",
+      region: "",
       monthlySpend: "",
       primaryUse: "",
       notes: ""
@@ -267,6 +282,22 @@ const Index = () => {
                     {serviceCategories.map((service) => (
                       <SelectItem key={service.value} value={service.value} className="text-base">
                         {service.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-3">
+                <Label htmlFor="region" className="text-base font-medium">AWS Region</Label>
+                <Select value={formData.region} onValueChange={(value) => setFormData({...formData, region: value})} required>
+                  <SelectTrigger className="h-12 text-base border-2 focus:border-primary/50">
+                    <SelectValue placeholder="Select AWS region" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border-2 shadow-lg z-50">
+                    {awsRegions.map((region) => (
+                      <SelectItem key={region.value} value={region.value} className="text-base">
+                        {region.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
